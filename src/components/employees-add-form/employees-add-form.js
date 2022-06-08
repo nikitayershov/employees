@@ -17,19 +17,29 @@ class EmployeesAddForm extends Component{
        })
     }
 
+    onSubmit = (e) => {
+        e.preventDefault();
+        this.props.onAdd(this.state.name, this.state.salary);
+        this.setState({
+            name: '',
+            salary: ''
+        })
+    }
+
     render() {
         const {name, salary} = this.state
         return (
             <div className="app-add-form">
                 <h3>Добавьте нового сотрудника</h3>
                 <form
-                    className="add-form d-flex">
+                    className="add-form d-flex"
+                    onSubmit={this.onSubmit}>
                     <input type="text"
                            className="form-control new-post-label"
                            placeholder="Как его зовут?"
                            name="name" // должно соответствовать ключам state. И
-                           value={name} // если value стоит в том ключе что мы здесь используем state, то в value з
-                            // аписывается актуальное значение компонента, то есть значение value формы инпута будет
+                           value={name} // если value стоит в том ключе что мы здесь используем state, то в value
+                            // записывается актуальное значение компонента, то есть значение value формы инпута будет
                             // контроироваться React-ом и элемент будет называться управляемым компонентом ( в данном
                             // случае управяемый элемент
                             // получается двойное связывание: то что иы вводим в input контролируется при помощи state

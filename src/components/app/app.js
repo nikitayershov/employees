@@ -17,8 +17,8 @@ class App extends Component {
                 {name: "John C.", salary: 800, increase: true, id: 1},
                 {name: "Alex M.", salary: 3000, increase: false, id: 2},
                 {name: "Carl W.", salary: 15000, increase: true, id: 3}
-            ]
-
+            ],
+            maxId: 4
         }
     }
 
@@ -28,6 +28,22 @@ class App extends Component {
                 data: data.filter(item => item.id !== id) // возвращает новый массив без элемента с указанным id
             }
         })
+    }
+
+    addItem = (name, salary) => {
+
+        const newItem = {name: name, salary: salary, increase: true, id: this.state.maxId} // создаем новый элемент
+
+        this.setState(({data}) => {
+            const newData = [...data, newItem] // добавляем его в существующий массив
+            return {
+                data: newData
+            }
+        })
+
+        this.setState(state => ({
+            maxId: state.maxId + 1 // увеличиваем счетчик id, чтобы не было повторений
+        }))
     }
 
     render() {
@@ -43,7 +59,7 @@ class App extends Component {
                 <EmployeesList
                     data={this.state.data}
                     onDelete={this.deleteItem}/>
-                <EmployeesAddForm/>
+                <EmployeesAddForm onAdd={this.addItem}/>
             </div>
         )
     }
