@@ -14,9 +14,9 @@ class App extends Component {
         super(props);
         this.state = {
             data: [
-                {name: "John C.", salary: 800, increase: true, id: 1},
-                {name: "Alex M.", salary: 3000, increase: false, id: 2},
-                {name: "Carl W.", salary: 15000, increase: true, id: 3}
+                {name: "John C.", salary: 800, increase: true, rise:true, id: 1},
+                {name: "Alex M.", salary: 3000, increase: false, rise:false, id: 2},
+                {name: "Carl W.", salary: 15000, increase: true, rise:false, id: 3}
             ],
             maxId: 4
         }
@@ -31,8 +31,7 @@ class App extends Component {
     }
 
     addItem = (name, salary) => {
-
-        const newItem = {name: name, salary: salary, increase: true, id: this.state.maxId} // создаем новый элемент
+        const newItem = {name: name, salary: salary, increase: false, rise:false, id: this.state.maxId} // создаем новый элемент
 
         this.setState(({data}) => {
             const newData = [...data, newItem] // добавляем его в существующий массив
@@ -40,16 +39,30 @@ class App extends Component {
                 data: newData
             }
         })
-
         this.setState(state => ({
             maxId: state.maxId + 1 // увеличиваем счетчик id, чтобы не было повторений
         }))
     }
 
+    onToggleProp = (id, prop) => {
+        this.setState(({data}) => ({
+            data: data.map(item => {
+                if (item.id === id) {
+                    return{...item,  [prop]: !item[prop]} //изменяет и возвращает новый объект если id совпал
+                }
+                return item; // возвращает старый объект в ином случае
+            })
+        }))
+    }
+
     render() {
+        const employees = this.state.data.length; // общее число сотрудников
+        const increased = this.state.data.filter(item => item.increase).length; // с премией
+
         return (
             <div className='app'>
-                <AppInfo/>
+                <AppInfo employees={employees}
+                         increased={increased}/>
 
                 <div className="search-panel">
                     <SearchPanel/>
@@ -58,7 +71,8 @@ class App extends Component {
 
                 <EmployeesList
                     data={this.state.data}
-                    onDelete={this.deleteItem}/>
+                    onDelete={this.deleteItem}
+                    onToggleProp={this.onToggleProp}/>
                 <EmployeesAddForm onAdd={this.addItem}/>
             </div>
         )
