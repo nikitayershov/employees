@@ -18,6 +18,8 @@ class App extends Component {
                 {name: "Alex M.", salary: 3000, increase: false, rise:false, id: 2},
                 {name: "Carl W.", salary: 15000, increase: true, rise:false, id: 3}
             ],
+            term: '',
+            filter:'all',
             maxId: 4
         }
     }
@@ -55,9 +57,41 @@ class App extends Component {
         }))
     }
 
+    searchEmp = (items, term) => {
+        if (term.length === 0) { // если поиск пустой – возвращает массив без изменений
+            return items;
+        }
+
+        return items.filter(item => {
+             return item.name.indexOf(term) > -1 //возвращает item, поиск нашел подстроку
+        })
+    }
+
+    onUpdateSearch = (term) => {
+        this.setState({term: term})
+    }
+
+   filterPost = (items, filter) => {
+        switch (filter) {
+            case 'rise':
+                return items.filter(item => item.rise);
+            case 'moreThen1000':
+                return items.filter(item => item.salary > 1000);
+            default:
+                return items
+        }
+   }
+
+   onFilterSelect = (filter) => {
+        this.setState({filter})
+   }
+
     render() {
+        const {data, term, filter} = this.state
         const employees = this.state.data.length; // общее число сотрудников
         const increased = this.state.data.filter(item => item.increase).length; // с премией
+        const visibleData = this.filterPost(this.searchEmp(data, term), filter); // сначала фильтрация по поиску, потом по фильтру
+
 
         return (
             <div className='app'>
@@ -65,12 +99,12 @@ class App extends Component {
                          increased={increased}/>
 
                 <div className="search-panel">
-                    <SearchPanel/>
-                    <AppFilter/>
+                    <SearchPanel onUpdateSearch={this.onUpdateSearch}/>
+                    <AppFilter filter={filter} onFilterSelect={this.onFilterSelect}/>
                 </div>
 
                 <EmployeesList
-                    data={this.state.data}
+                    data={visibleData}
                     onDelete={this.deleteItem}
                     onToggleProp={this.onToggleProp}/>
                 <EmployeesAddForm onAdd={this.addItem}/>
